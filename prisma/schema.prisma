@@ -1,0 +1,87 @@
+// Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // Replace with your DB provider
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  password    String
+  firstName   String
+  lastName    String
+  phoneNumber String
+  address     String?
+  dateOfBirth String?
+  gender      String?
+  image       String?
+  role        Role    @default(STUDENT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  Course      Course[]
+  ComplaintsAndSuggestions ComplaintsAndSuggestions[]
+}
+
+model Course {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  field       String?
+  price       Float?
+  startDate   DateTime?
+  studentCount Int   @default(0)
+  rating      Float?
+  image       String?
+  authorId    Int
+  author      User    @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  Center      Center?   @relation(fields: [centerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  centerId    Int?
+}
+
+model Center {
+  id          Int      @id @default(autoincrement())
+  name        String
+  image       String?
+  address     String?
+  phoneNumber String?
+  email       String?
+  rating      Float?
+  courses     Course[]
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ComplaintsAndSuggestions {
+  id        Int     @id @default(autoincrement())
+  title     String
+  problem   String
+  solution  String?
+  image     String
+  status    ComplaintsAndSuggestionsStatus @default(PENDING)
+  studentId Int
+  teacherId Int?
+  adminId   Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Student   User? @relation(fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum ComplaintsAndSuggestionsStatus {
+  PENDING
+  SOLVED
+}
+
+enum Role {
+  ADMIN
+  TEACHER
+  STUDENT
+}

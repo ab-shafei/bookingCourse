@@ -1,0 +1,50 @@
+services:
+  app:
+    depends_on:
+      - bookingCoursePostgresdb
+    build: .
+    container_name: bookingCourseApiApp
+    restart: unless-stopped
+    volumes:
+      - /root/apps/bookingCourseApi/uploads:/app/uploads
+    env_file: ./.env
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    environment:
+      - DB_HOST=postgresdb
+      - DB_USER=$POSTGRESDB_USER
+      - DB_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
+      - DB_NAME=$POSTGRESDB_DATABASE
+      - DB_PORT=$POSTGRESDB_DOCKER_PORT
+      - DATABASE_URL=$DATABASE_URL
+    stdin_open: true
+    tty: true
+
+  bookingCoursePostgresdb:
+    image: postgres:14-alpine
+    container_name: bookingCoursePostgresdb
+    restart: unless-stopped
+    env_file: ./.env
+    volumes:
+      - bookingCourseDB:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=$POSTGRESDB_USER
+      - POSTGRES_PASSWORD=$POSTGRESDB_ROOT_PASSWORD
+      - POSTGRES_DB=$POSTGRESDB_DATABASE
+    ports:
+      - $POSTGRESDB_LOCAL_PORT:$POSTGRESDB_DOCKER_PORT
+
+  bookingCoursePgadmin:
+    image: dpage/pgadmin4
+    container_name: bookingCoursePgadmin
+    restart: unless-stopped
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=$PGADMIN_DEFAULT_EMAIL
+      - PGADMIN_DEFAULT_PASSWORD=$PGADMIN_DEFAULT_PASSWORD
+    ports:
+      - "5002:80"
+    depends_on:
+      - bookingCoursePostgresdb
+
+volumes:
+  bookingCourseDB:
