@@ -6,6 +6,9 @@ import {
   getCourses,
   modifyCourse,
   removeCourse,
+  getFavoriteCourses,
+  addCourseToFavorite,
+  removeCourseFromFavorite,
 } from "../services/courseService";
 import { AppError } from "../middlewares/AppError";
 
@@ -15,9 +18,32 @@ export const getAllCoursesController = async (
   next: NextFunction
 ) => {
   try {
-    const { search } = req.query as { search: string };
+    const query = req.query as any;
 
-    const courses = await getCourses(search);
+    if (query.price) {
+      const convertedId = Number(query.price);
+      if (isNaN(convertedId)) {
+        throw new AppError(400, "Price invalid");
+      }
+      query.price = parseFloat(query.price);
+    }
+
+    const courses = await getCourses(query);
+    res.status(200).json(courses);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFavoriteCoursesController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.user!;
+
+    const courses = await getFavoriteCourses(id);
     res.status(200).json(courses);
   } catch (error) {
     next(error);
@@ -106,6 +132,44 @@ export const deleteCourseController = async (
     }
     const course = await removeCourse(convertedId);
     res.status(200).json(course);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const adddCourseToFavoriteController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.user!;
+    const { courseId } = req.params;
+    const convertedId = Number(courseId);
+    if (isNaN(convertedId)) {
+      throw new AppError(400, "course id invalid");
+    }
+    const message = await addCourseToFavorite(id, convertedId);
+    res.status(200).json(message);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const removeCourseFromFavoriteController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.user!;
+    const { courseId } = req.params;
+    const convertedId = Number(courseId);
+    if (isNaN(convertedId)) {
+      throw new AppError(400, "course id invalid");
+    }
+    const message = await removeCourseFromFavorite(id, convertedId);
+    res.status(200).json(message);
   } catch (error) {
     next(error);
   }

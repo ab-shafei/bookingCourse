@@ -65,7 +65,30 @@ export const loginUser = async (email: string, password: string) => {
       expiresIn: "365d",
     }
   );
-  return { token, user };
+
+  let courses;
+
+  switch (user.role) {
+    case "STUDENT":
+      const bookings = await prisma.booking.findMany({
+        where: { studentId: user.id },
+        include: { course: true },
+      });
+      courses = bookings.map((booking) => booking.course);
+      break;
+    case "TEACHER":
+      courses = await prisma.course.findMany({
+        where: { authorId: user.id },
+      });
+      break;
+    case "ADMIN":
+      courses = await prisma.course.findMany();
+      break;
+    default:
+      throw new AppError(500, "Something went wrong");
+  }
+
+  return { token, user, courses };
 };
 
 export const changePassword = async (

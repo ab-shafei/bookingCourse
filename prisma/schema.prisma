@@ -27,6 +27,8 @@ model User {
   ComplaintsAndSuggestions ComplaintsAndSuggestions[]
 
   Booking Booking[]
+
+  Favorite Favorite[]
 }
 
 model Course {
@@ -37,8 +39,8 @@ model Course {
   price       Float?
   startDate   DateTime?
   studentCount Int   @default(0)
-  rating      Float?
   image       String?
+  level       Level  @default(EASY)
   authorId    Int
   author      User    @relation(fields: [authorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdAt   DateTime  @default(now())
@@ -47,6 +49,8 @@ model Course {
   centerId    Int?
 
   Booking Booking[]
+
+  Favorite Favorite[]
 }
 
 model Center {
@@ -61,6 +65,17 @@ model Center {
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  student   User     @relation(fields: [studentId], references: [id])
+  studentId Int
+  course    Course   @relation(fields: [courseId], references: [id])
+  courseId  Int
+   createdAt DateTime @default(now())
+
+  @@unique([studentId, courseId])
 }
 
 model Booking {
@@ -100,4 +115,10 @@ enum Role {
   ADMIN
   TEACHER
   STUDENT
+}
+
+enum Level {
+  EASY
+  MEDIUM
+  HARD
 }

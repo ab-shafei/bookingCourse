@@ -5,6 +5,9 @@ import {
   createCourseController,
   updateCourseController,
   deleteCourseController,
+  getFavoriteCoursesController,
+  adddCourseToFavoriteController,
+  removeCourseFromFavoriteController,
 } from "../controllers/courseController";
 import { authenticateJWT, authorizeRoles } from "../middlewares/authMiddleware";
 import {
@@ -35,6 +38,26 @@ router.delete(
   authenticateJWT,
   authorizeRoles("TEACHER", "ADMIN"),
   deleteCourseController
+);
+
+// favorite
+router.get(
+  "/me/favorites",
+  authenticateJWT,
+  authorizeRoles("STUDENT"),
+  getFavoriteCoursesController
+);
+router.post(
+  "/me/favorites/:courseId",
+  authenticateJWT,
+  authorizeRoles("STUDENT"),
+  adddCourseToFavoriteController
+);
+router.delete(
+  "/me/favorites/:courseId",
+  authenticateJWT,
+  authorizeRoles("STUDENT"),
+  removeCourseFromFavoriteController
 );
 
 export default router;

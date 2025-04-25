@@ -4,9 +4,19 @@ import {
   CreateCourseType,
   UpdateCourseType,
 } from "../validations/schemas/courseSchema";
+import { Level } from "@prisma/client";
 
-export const getCourses = async (search?: string) => {
-  return prisma.course.findMany({
+export const getCourses = async (filter: {
+  search?: string;
+  field?: string;
+  price?: number;
+  address?: string;
+  centerId?: number;
+  level?: Level;
+}) => {
+  const { search, field, price, address, centerId, level } = filter;
+
+  return await prisma.course.findMany({
     where: {
       ...(search && {
         OR: [
@@ -15,14 +25,31 @@ export const getCourses = async (search?: string) => {
           { Center: { name: { contains: search, mode: "insensitive" } } },
         ],
       }),
+      ...(field && { field }),
+      ...(price && { price }),
+      ...(address && {
+        Center: { address: { contains: address, mode: "insensitive" } },
+      }),
+      ...(centerId && { centerId }),
+      ...(level && { level }),
     },
     include: { author: true, Center: true },
   });
 };
 
+export const getFavoriteCourses = async (studentId: number) => {
+  const favorites = await prisma.favorite.findMany({
+    where: { studentId },
+    include: { course: true },
+  });
+
+  return { courses: favorites.map((fav) => fav.course) };
+};
+
 export const getCourse = async (id: number) => {
   const course = await prisma.course.findUnique({
     where: { id },
+    include: { author: true, Center: true },
   });
   if (!course) {
     throw new AppError(404, "Course not found");
@@ -85,4 +112,54 @@ export const removeCourse = async (id: number) => {
     },
   });
   return course;
+};
+
+export const addCourseToFavorite = async (
+  studentId: number,
+  courseId: number
+) => {
+  const existingCourse = await prisma.course.findUnique({
+    where: { id: courseId },
+  });
+  if (!existingCourse) {
+    throw new AppError(404, "Course not found");
+  }
+
+  const existingFavorite = await prisma.favorite.findUnique({
+    where: { studentId_courseId: { studentId, courseId } },
+  });
+  if (existingFavorite) {
+    throw new AppError(404, "Course already in favorite");
+  }
+
+  await prisma.favorite.create({
+    data: { studentId, courseId },
+  });
+  return "Course added to favorite";
+};
+
+export const removeCourseFromFavorite = async (
+  studentId: number,
+  courseId: number
+) => {
+  const existingCourse = await prisma.course.findUnique({
+    where: { id: courseId },
+  });
+  if (!existingCourse) {
+    throw new AppError(404, "Course not found");
+  }
+
+  const existingFavorite = await prisma.favorite.findUnique({
+    where: { studentId_courseId: { studentId, courseId } },
+  });
+  if (!existingFavorite) {
+    throw new AppError(404, "Course not in favorite");
+  }
+
+  await prisma.favorite.delete({
+    where: {
+      studentId_courseId: { studentId, courseId },
+    },
+  });
+  return "Course removed from favorite";
 };

@@ -101,8 +101,8 @@ export const login = async (
 ) => {
   const { email, password } = req.body;
   try {
-    const { token, user } = await loginUser(email, password);
-    res.json({ token, user });
+    const data = await loginUser(email, password);
+    res.json(data);
   } catch (error) {
     next(error);
   }

@@ -21,9 +21,26 @@ export const bookCourse = async (
   });
   if (!existingCourse) throw new AppError(404, "Course not found");
 
-  return prisma.booking.create({
-    data: { studentId, courseId },
+  if (existingCourse.studentCount === 10)
+    throw new AppError(400, "Course max student reached");
+
+  const alreadyBooked = await prisma.booking.findFirst({
+    where: { studentId, courseId },
   });
+
+  if (alreadyBooked) {
+    throw new AppError(400, "Course already booked");
+  }
+
+  const [booking] = await prisma.$transaction([
+    prisma.booking.create({ data: { studentId, courseId } }),
+    prisma.course.update({
+      where: { id: courseId },
+      data: { studentCount: { increment: 1 } },
+    }),
+  ]);
+
+  return booking;
 };
 
 export const cancelBooking = async (
