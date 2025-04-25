@@ -10,6 +10,7 @@ import "dotenv/config";
 import authRoutes from "./routes/authRoutes";
 import centerRoutes from "./routes/centerRoutes";
 import courseRoutes from "./routes/courseRoutes";
+import bookingRoutes from "./routes/bookingRoutes";
 
 import path from "path";
 import { notFound } from "./controllers/notFoundController";
@@ -35,6 +36,7 @@ app.use("/api/auth", authRoutes);
 // Routes
 app.use("/api/centers", centerRoutes);
 app.use("/api/courses", courseRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 // Error Handling
 app.use(errorHandler);

@@ -77,3 +77,22 @@ export const removeCourse = async (id: number) => {
   });
   return course;
 };
+
+export const searchCourses = async (query: string) => {
+  return prisma.course.findMany({
+    where: {
+      OR: [
+        { name: { contains: query, mode: "insensitive" } },
+        { author: { firstName: { contains: query, mode: "insensitive" } } },
+        { Center: { name: { contains: query, mode: "insensitive" } } },
+      ],
+    },
+    include: { author: true, Center: true },
+  });
+};
+
+export const filterCoursesByCenter = async (centerId: number) => {
+  return prisma.course.findMany({
+    where: { centerId },
+  });
+};
