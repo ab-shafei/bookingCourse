@@ -1,10 +1,10 @@
 import { Router } from "express";
 import {
-  getAllCourses,
-  getCourseById,
-  createCourse,
-  updateCourse,
-  deleteCourse,
+  getAllCoursesController,
+  getCourseByIdController,
+  createCourseController,
+  updateCourseController,
+  deleteCourseController,
 } from "../controllers/courseController";
 import { authenticateJWT, authorizeRoles } from "../middlewares/authMiddleware";
 import {
@@ -14,26 +14,27 @@ import {
 
 const router = Router();
 
-router.get("/", getAllCourses);
-router.get("/:id", getCourseById);
+router.get("/", getAllCoursesController);
+router.get("/:id", getCourseByIdController);
 router.post(
   "/",
   createCourseValidation,
   authenticateJWT,
   authorizeRoles("TEACHER", "ADMIN"),
-  createCourse
+  createCourseController
 );
 router.put(
   "/:id",
   updateCourseValidation,
   authenticateJWT,
   authorizeRoles("TEACHER", "ADMIN"),
-  updateCourse
+  updateCourseController
 );
 router.delete(
   "/:id",
   authenticateJWT,
   authorizeRoles("TEACHER", "ADMIN"),
-  deleteCourse
+  deleteCourseController
 );
+
 export default router;

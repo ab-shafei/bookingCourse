@@ -9,20 +9,22 @@ import {
 } from "../services/courseService";
 import { AppError } from "../middlewares/AppError";
 
-export const getAllCourses = async (
-  _req: Request,
+export const getAllCoursesController = async (
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    const courses = await getCourses();
+    const { search } = req.query as { search: string };
+
+    const courses = await getCourses(search);
     res.status(200).json(courses);
   } catch (error) {
     next(error);
   }
 };
 
-export const getCourseById = async (
+export const getCourseByIdController = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -42,7 +44,7 @@ export const getCourseById = async (
   }
 };
 
-export const createCourse = async (
+export const createCourseController = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
@@ -65,7 +67,7 @@ export const createCourse = async (
   }
 };
 
-export const updateCourse = async (
+export const updateCourseController = async (
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
@@ -91,7 +93,7 @@ export const updateCourse = async (
   }
 };
 
-export const deleteCourse = async (
+export const deleteCourseController = async (
   req: Request,
   res: Response,
   next: NextFunction

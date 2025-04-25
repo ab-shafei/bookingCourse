@@ -6,7 +6,6 @@ import {
   InferInput,
   uuid,
   number,
-  date,
 } from "valibot";
 
 export const CreateCourseSchema = object({

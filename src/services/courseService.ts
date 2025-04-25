@@ -5,10 +5,19 @@ import {
   UpdateCourseType,
 } from "../validations/schemas/courseSchema";
 
-export const getCourses = async () => {
-  const courses = await prisma.course.findMany();
-
-  return courses;
+export const getCourses = async (search?: string) => {
+  return prisma.course.findMany({
+    where: {
+      ...(search && {
+        OR: [
+          { name: { contains: search, mode: "insensitive" } },
+          { author: { firstName: { contains: search, mode: "insensitive" } } },
+          { Center: { name: { contains: search, mode: "insensitive" } } },
+        ],
+      }),
+    },
+    include: { author: true, Center: true },
+  });
 };
 
 export const getCourse = async (id: number) => {
@@ -76,23 +85,4 @@ export const removeCourse = async (id: number) => {
     },
   });
   return course;
-};
-
-export const searchCourses = async (query: string) => {
-  return prisma.course.findMany({
-    where: {
-      OR: [
-        { name: { contains: query, mode: "insensitive" } },
-        { author: { firstName: { contains: query, mode: "insensitive" } } },
-        { Center: { name: { contains: query, mode: "insensitive" } } },
-      ],
-    },
-    include: { author: true, Center: true },
-  });
-};
-
-export const filterCoursesByCenter = async (centerId: number) => {
-  return prisma.course.findMany({
-    where: { centerId },
-  });
 };
