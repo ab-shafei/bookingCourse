@@ -19,14 +19,14 @@ export const CreateUserSchema = object({
   password: pipe(
     string("Password is required"),
     minLength(8, "Your password is too short."),
-    maxLength(30, "Your password is too long."),
-    regex(/[a-z]/, "Your password must contain a lowercase letter."),
-    regex(/[A-Z]/, "Your password must contain a uppercase letter."),
-    regex(/[0-9]/, "Your password must contain a number.")
+    maxLength(30, "Your password is too long.")
+    // regex(/[a-z]/, "Your password must contain a lowercase letter."),
+    // regex(/[A-Z]/, "Your password must contain a uppercase letter."),
+    // regex(/[0-9]/, "Your password must contain a number.")
   ),
   phoneNumber: pipe(
-    string("Enter phone number"),
-    regex(/^01\d{9}/, "Phone number must be 11 numbers starting with 01")
+    string("Enter phone number")
+    // regex(/^01\d{9}/, "Phone number must be 11 numbers starting with 01")
   ),
   role: optional(venum(Role, "Invalid Rule")),
 });
