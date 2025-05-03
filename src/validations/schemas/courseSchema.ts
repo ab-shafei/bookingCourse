@@ -10,6 +10,7 @@ import {
 
 export const CreateCourseSchema = object({
   name: string("Invalid name"),
+  image: string("Invalid link"),
   description: string("Invalid description"),
   field: string("Invalid field"),
   price: number(),
