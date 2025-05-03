@@ -21,7 +21,7 @@ export const bookCourse = async (
   });
   if (!existingCourse) throw new AppError(404, "Course not found");
 
-  if (existingCourse.studentCount === 10)
+  if (existingCourse.studentCount === existingCourse.maxStudentCount)
     throw new AppError(400, "Course max student reached");
 
   const alreadyBooked = await prisma.booking.findFirst({

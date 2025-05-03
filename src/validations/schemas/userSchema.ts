@@ -7,9 +7,7 @@ import {
   email,
   minLength,
   maxLength,
-  regex,
   enum as venum,
-  required,
   optional,
 } from "valibot";
 
@@ -24,15 +22,25 @@ export const CreateUserSchema = object({
     // regex(/[A-Z]/, "Your password must contain a uppercase letter."),
     // regex(/[0-9]/, "Your password must contain a number.")
   ),
-  phoneNumber: pipe(
-    string("Enter phone number")
-    // regex(/^01\d{9}/, "Phone number must be 11 numbers starting with 01")
-  ),
+  phoneNumber: string("Enter phone number"),
   role: optional(venum(Role, "Invalid Rule")),
+});
+
+export const UpdateUserSchema = object({
+  firstName: optional(string("Invalid firstName")),
+  lastName: optional(string("Invalid lastName")),
+  phoneNumber: optional(string("Invalid phoneNumber")),
+  address: optional(string("Invalid aaddress")),
+  dateOfBirth: optional(string("Invalid dataOfBirth")),
 });
 
 export const CreateUserRequestSchema = object({
   body: CreateUserSchema,
 });
 
+export const UpdateUserRequestSchema = object({
+  body: UpdateUserSchema,
+});
+
 export type CreateUserType = InferInput<typeof CreateUserSchema>;
+export type UpdateUserType = InferInput<typeof UpdateUserSchema>;

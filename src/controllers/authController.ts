@@ -3,6 +3,7 @@ import {
   registerUser,
   loginUser,
   changePassword,
+  updateUser,
 } from "../services/authService";
 import { AppError } from "../middlewares/AppError";
 import { AuthenticatedRequest } from "../middlewares/authMiddleware";
@@ -119,6 +120,23 @@ export const changeUserPassword = async (
     const user = await changePassword(id, {
       oldPassword,
       newPassword,
+    });
+    res.status(200).json(user);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.user!;
+
+    const user = await updateUser(id, {
+      ...req.body,
     });
     res.status(200).json(user);
   } catch (error) {

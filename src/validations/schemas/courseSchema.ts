@@ -10,8 +10,8 @@ import {
 
 export const CreateCourseSchema = object({
   name: string("Invalid name"),
-  image: string("Invalid link"),
   description: string("Invalid description"),
+  image: string("Invalid link"),
   field: string("Invalid field"),
   price: number(),
   startDate: string(),
@@ -21,6 +21,7 @@ export const CreateCourseSchema = object({
 export const UpdateCourseSchema = object({
   name: optional(string("Invalid name")),
   description: optional(string("Invalid description")),
+  image: optional(string("Invalid link")),
   field: optional(string("Invalid field")),
   price: optional(number()),
   startDate: optional(string()),

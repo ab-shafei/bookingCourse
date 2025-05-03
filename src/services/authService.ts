@@ -91,6 +91,24 @@ export const loginUser = async (email: string, password: string) => {
   return { token, user, courses };
 };
 
+export const updateUser = async (
+  userId: number,
+  data: {
+    firstName?: string;
+    lastName?: string;
+    phoneNumber?: string;
+    address?: string;
+    dateOfBirth?: string;
+  }
+) => {
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data,
+  });
+
+  return updatedUser;
+};
+
 export const changePassword = async (
   id: number,
   {

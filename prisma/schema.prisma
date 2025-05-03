@@ -39,6 +39,7 @@ model Course {
   price       Float?
   startDate   DateTime?
   studentCount Int   @default(0)
+  maxStudentCount Int @default(10)
   image       String?
   level       Level  @default(EASY)
   authorId    Int
