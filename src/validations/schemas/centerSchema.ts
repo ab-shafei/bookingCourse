@@ -16,6 +16,7 @@ export const CreateCenterSchema = object({
     regex(/^01\d{9}$/, "Phone number must be 11 numbers starting with 01")
   ),
   email: pipe(string(), email()),
+  image: optional(string("Invalid link")),
 });
 
 export const UpdateCenterSchema = object({
@@ -28,6 +29,7 @@ export const UpdateCenterSchema = object({
     )
   ),
   email: optional(pipe(string(), email())),
+  image: optional(string("Invalid link")),
 });
 
 export const CreateCenterRequestSchema = object({
