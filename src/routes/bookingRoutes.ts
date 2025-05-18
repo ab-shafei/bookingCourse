@@ -4,6 +4,7 @@ import {
   getUserBookedCoursesController,
   bookCourseController,
   cancelBookingController,
+  getUserCoursesStatusController,
 } from "../controllers/bookingController";
 
 import { authenticateJWT, authorizeRoles } from "../middlewares/authMiddleware";
@@ -16,10 +17,18 @@ const router = Router();
 
 router.get(
   "/",
+  // "/status",
   authenticateJWT,
   authorizeRoles("STUDENT", "ADMIN"),
-  getUserBookedCoursesController
+  getUserCoursesStatusController
 );
+
+// router.get(
+
+//   authenticateJWT,
+//   authorizeRoles("STUDENT", "ADMIN"),
+//   getUserBookedCoursesController
+// );
 router.post(
   "/",
   bookCourseValidation,

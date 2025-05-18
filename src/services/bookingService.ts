@@ -61,3 +61,35 @@ export const cancelBooking = async (
     },
   });
 };
+
+export const getUserCoursesStatus = async (studentId: number) => {
+  const [bookedCourses, favoriteCourses] = await Promise.all([
+    prisma.booking.findMany({
+      where: { studentId },
+      include: { 
+        course: {
+          include: {
+            Center: true,
+            author: true
+          }
+        }
+      }
+    }),
+    prisma.favorite.findMany({
+      where: { studentId },
+      include: { 
+        course: {
+          include: {
+            Center: true,
+            author: true
+          }
+        }
+      }
+    })
+  ]);
+
+  return {
+    booked_courses: bookedCourses.map(booking => booking.course),
+    favorite_courses: favoriteCourses.map(favorite => favorite.course)
+  };
+};

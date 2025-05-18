@@ -4,6 +4,7 @@ import {
   getUserBookedCourses,
   bookCourse,
   cancelBooking,
+  getUserCoursesStatus
 } from "../services/bookingService";
 
 export const getUserBookedCoursesController = async (
@@ -48,6 +49,20 @@ export const cancelBookingController = async (
 
     const booking = await cancelBooking(id, { courseId });
     res.status(200).json(booking);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserCoursesStatusController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id } = req.user!;
+    const courses = await getUserCoursesStatus(id);
+    res.status(200).json(courses);
   } catch (error) {
     next(error);
   }
